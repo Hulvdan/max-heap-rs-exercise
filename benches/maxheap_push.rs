@@ -22,9 +22,9 @@ fn maxheap_push(c: &mut Criterion, count: i32) {
     c.bench_function(
         id.as_str(),
         |b| b.iter(|| {
-            let mut heap = black_box(MaxHeap::new());
+            let mut heap = black_box(MaxHeap::<i32>::default());
             for value in vec_of_random_numbers.iter() {
-                heap.push(value)
+                heap.push(*value)
             }
         }),
     );

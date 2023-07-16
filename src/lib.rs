@@ -1,14 +1,10 @@
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct MaxHeap<T: PartialOrd> {
     vec: Vec<T>,
 }
 
 
 impl<T: PartialOrd> MaxHeap<T> {
-    pub fn new() -> MaxHeap<T> {
-        MaxHeap { vec: Vec::<T>::new() }
-    }
-
     pub fn from_vec(vec: Vec<T>) -> MaxHeap<T> {
         let mut heap = MaxHeap { vec };
 
@@ -18,6 +14,10 @@ impl<T: PartialOrd> MaxHeap<T> {
 
     pub fn len(&self) -> usize {
         self.vec.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.vec.is_empty()
     }
 
     pub fn push(&mut self, value: T) {
@@ -53,12 +53,14 @@ impl<T: PartialOrd> MaxHeap<T> {
     }
 
     fn heapify_up_to_root(&mut self) {
-        let insertion_index = self.vec.len() - 1;
+        let mut i = self.vec.len() - 1;
 
-        let mut i = insertion_index.clone();
         while i > 0 {
             let parent_index = Self::parent_index(i);
-            self.swap_if_needed(parent_index, i);
+
+            if self.vec[parent_index] < self.vec[i] {
+                self.vec.swap(parent_index, i);
+            }
 
             i = parent_index;
         }
@@ -103,17 +105,6 @@ impl<T: PartialOrd> MaxHeap<T> {
     fn left_child_index(i: usize) -> usize {
         2 * i + 1
     }
-
-    #[inline(always)]
-    fn swap_if_needed(&mut self, parent_index: usize, child_index: usize) {
-        if child_index >= self.vec.len() {
-            return;
-        }
-
-        if self.vec[parent_index] < self.vec[child_index] {
-            self.vec.swap(parent_index, child_index);
-        }
-    }
 }
 
 
@@ -138,7 +129,7 @@ mod tests {
 
             let mut heap = MaxHeap::from_vec(numbers.clone());
             for _ in 0..numbers.len() {
-                results.push(heap.pop().clone());
+                results.push(heap.pop());
             }
 
             all_results.push(results);
